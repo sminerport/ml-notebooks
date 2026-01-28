@@ -8951,29 +8951,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // ========== LINE NUMBERS + COPY BUTTON (Pixel-Perfect) ==========
     document.querySelectorAll(".highlight pre").forEach(pre => {
-        // Skip output blocks
         if (pre.closest(".jp-OutputArea")) return;
 
-        // Wrap in container
         const wrapper = document.createElement("div");
         wrapper.className = "code-block-wrapper";
         pre.parentNode.insertBefore(wrapper, pre);
         wrapper.appendChild(pre);
 
-        // Compute actual line-height in pixels
         const computedStyle = window.getComputedStyle(pre);
         const lineHeightPx = parseFloat(computedStyle.lineHeight) || 
                             (parseFloat(computedStyle.fontSize) * 1.6);
-        
-        // Set CSS variables on wrapper
         wrapper.style.setProperty("--line-h", lineHeightPx + "px");
 
-        // Count lines
         const code = pre.textContent;
         const lines = code.split("\n");
         const lineCount = lines.length - (lines[lines.length-1] === "" ? 1 : 0);
 
-        // Build ordered list for line numbers
         const gutter = document.createElement("ol");
         gutter.className = "gutter";
         gutter.setAttribute("aria-hidden", "true");
@@ -8984,7 +8977,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         wrapper.insertBefore(gutter, pre);
 
-        // Add copy button
         const copyBtn = document.createElement("button");
         copyBtn.className = "copy-btn";
         copyBtn.textContent = "Copy";
@@ -9001,21 +8993,25 @@ document.addEventListener("DOMContentLoaded", function() {
         wrapper.appendChild(copyBtn);
     });
 
-    // ========== BACK TO TOP LINKS ==========
+    // ========== BACK TO TOP LINKS (H1 and H2 only) ==========
     const tocElement = document.getElementById(tocAnchorId);
     if (tocElement) {
-        document.querySelectorAll("h2, h3").forEach(h => {
-            if (h.closest(".notebook-toc")) return;
+        // Only H2 headings (H1 is typically the title, skip first one)
+        const h2s = Array.from(document.querySelectorAll("h2")).filter(h => !h.closest(".notebook-toc"));
+        
+        h2s.forEach(h => {
             const link = document.createElement("a");
             link.href = "#" + tocAnchorId;
             link.className = "back-to-top";
             link.textContent = "↑ Back to top";
-            const nextSibling = h.nextElementSibling;
-            while (nextSibling && !/^H[1-3]$/.test(nextSibling.tagName)) {
-                nextSibling = nextSibling.nextElementSibling;
+            
+            // Find next H1 or H2 to insert before
+            let sibling = h.nextElementSibling;
+            while (sibling && !/^H[12]$/i.test(sibling.tagName)) {
+                sibling = sibling.nextElementSibling;
             }
-            if (nextSibling) {
-                h.parentNode.insertBefore(link, nextSibling);
+            if (sibling) {
+                sibling.parentNode.insertBefore(link, sibling);
             } else {
                 h.parentNode.appendChild(link);
             }
