@@ -7508,7 +7508,13 @@ a.anchor-link {
     white-space: normal;
   }
 </style>
-<!-- End of mermaid configuration --><style>
+<!-- End of mermaid configuration --><!-- Open Graph for Teams/Slack/LinkedIn previews -->
+<meta property="og:title" content="Chapter 20: Reframe Time Series Forecasting Problems" />
+<meta property="og:description" content="Learn how to reframe time series forecasting as supervised learning problems using sliding window and lag features." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://sminerport.github.io/ml-notebooks/chapter20.html" />
+<meta name="twitter:card" content="summary" />
+<style>
 /* Custom styling for notebook HTML export - Maximum Aesthetics */
 
 /* Global box-sizing reset */
@@ -8915,10 +8921,8 @@ li { margin-bottom: 8px !important; }
 </main>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Remove Jupyter UI artifacts
     document.querySelectorAll("[class*=Collapser],.jp-InputPrompt,.jp-OutputPrompt").forEach(e => e.remove());
 
-    // ========== TABLE OF CONTENTS ==========
     const headings = document.querySelectorAll("h1, h2, h3");
     let tocAnchorId = "notebook-toc";
     if (headings.length > 0) {
@@ -8927,7 +8931,6 @@ document.addEventListener("DOMContentLoaded", function() {
         toc.id = tocAnchorId;
         toc.innerHTML = '<div class="notebook-toc-title">Table of Contents</div>';
         const ul = document.createElement("ul");
-
         headings.forEach((h, i) => {
             if (!h.id) h.id = "heading-" + i;
             const li = document.createElement("li");
@@ -8939,44 +8942,28 @@ document.addEventListener("DOMContentLoaded", function() {
             ul.appendChild(li);
         });
         toc.appendChild(ul);
-
         const firstHr = document.querySelector("hr");
-        if (firstHr) {
-            firstHr.parentNode.insertBefore(toc, firstHr.nextSibling);
-        } else {
-            const main = document.querySelector("main, .jp-Notebook, body");
-            if (main.firstChild) main.insertBefore(toc, main.firstChild);
-        }
+        if (firstHr) { firstHr.parentNode.insertBefore(toc, firstHr.nextSibling); }
+        else { const main = document.querySelector("main, .jp-Notebook, body"); if (main.firstChild) main.insertBefore(toc, main.firstChild); }
     }
 
-    // ========== LINE NUMBERS + COPY BUTTON (Pixel-Perfect) ==========
     document.querySelectorAll(".highlight pre").forEach(pre => {
         if (pre.closest(".jp-OutputArea")) return;
-
         const wrapper = document.createElement("div");
         wrapper.className = "code-block-wrapper";
         pre.parentNode.insertBefore(wrapper, pre);
         wrapper.appendChild(pre);
-
         const computedStyle = window.getComputedStyle(pre);
-        const lineHeightPx = parseFloat(computedStyle.lineHeight) || 
-                            (parseFloat(computedStyle.fontSize) * 1.6);
+        const lineHeightPx = parseFloat(computedStyle.lineHeight) || (parseFloat(computedStyle.fontSize) * 1.6);
         wrapper.style.setProperty("--line-h", lineHeightPx + "px");
-
         const code = pre.textContent;
         const lines = code.split("\n");
         const lineCount = lines.length - (lines[lines.length-1] === "" ? 1 : 0);
-
         const gutter = document.createElement("ol");
         gutter.className = "gutter";
         gutter.setAttribute("aria-hidden", "true");
-        for (let i = 1; i <= lineCount; i++) {
-            const li = document.createElement("li");
-            li.textContent = i;
-            gutter.appendChild(li);
-        }
+        for (let i = 1; i <= lineCount; i++) { const li = document.createElement("li"); li.textContent = i; gutter.appendChild(li); }
         wrapper.insertBefore(gutter, pre);
-
         const copyBtn = document.createElement("button");
         copyBtn.className = "copy-btn";
         copyBtn.textContent = "Copy";
@@ -8984,37 +8971,24 @@ document.addEventListener("DOMContentLoaded", function() {
             navigator.clipboard.writeText(code.trim()).then(() => {
                 copyBtn.textContent = "Copied!";
                 copyBtn.classList.add("copied");
-                setTimeout(() => {
-                    copyBtn.textContent = "Copy";
-                    copyBtn.classList.remove("copied");
-                }, 2000);
+                setTimeout(() => { copyBtn.textContent = "Copy"; copyBtn.classList.remove("copied"); }, 2000);
             });
         });
         wrapper.appendChild(copyBtn);
     });
 
-    // ========== BACK TO TOP LINKS (H1 and H2 only) ==========
     const tocElement = document.getElementById(tocAnchorId);
     if (tocElement) {
-        // Only H2 headings (H1 is typically the title, skip first one)
         const h2s = Array.from(document.querySelectorAll("h2")).filter(h => !h.closest(".notebook-toc"));
-        
         h2s.forEach(h => {
             const link = document.createElement("a");
             link.href = "#" + tocAnchorId;
             link.className = "back-to-top";
             link.textContent = "↑ Back to top";
-            
-            // Find next H1 or H2 to insert before
             let sibling = h.nextElementSibling;
-            while (sibling && !/^H[12]$/i.test(sibling.tagName)) {
-                sibling = sibling.nextElementSibling;
-            }
-            if (sibling) {
-                sibling.parentNode.insertBefore(link, sibling);
-            } else {
-                h.parentNode.appendChild(link);
-            }
+            while (sibling && !/^H[12]$/i.test(sibling.tagName)) { sibling = sibling.nextElementSibling; }
+            if (sibling) { sibling.parentNode.insertBefore(link, sibling); }
+            else { h.parentNode.appendChild(link); }
         });
     }
 });
